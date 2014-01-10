@@ -1,0 +1,42 @@
+How does Java convert int into byte?
+
+int i =132;
+byte b =(byte)i;
+System.out.println(b);
+The output is -124
+
+Why is that? I know this is a very basic question, but I'm still not able to map it, or understand how this happens?
+
+In java, an int is 32 bits. A byte is 8.
+Everything in Java is signed, and bytes, ints, longs are encoded in two's complement.
+In this number scheme the most significant bit specifies the sign of the number. If more bits are needed, the most significant bit is simply copied to the new msb.
+    So if you have byte 255: 11111111 and you want to represent it as an int (32 bits) you simply copy the 1 to the left 24 times.
+
+Now, one way to read a negative two's complement number is to start with the least significant bit, move left until you find the first 1, then invert every bit afterwards. The resulting number is the positive version of that number
+
+so: 11111111 goes to - 00000001 -> -1. This is what Java will display as the value.
+
+What you probably want to do is know the unsigned value of the byte.
+
+You can accomplish this with a bitmask that deletes everything but the least significant 8 bytes. (0xff)
+
+So:
+
+byte signedByte = -1;
+int unsignedByte = signedByte & (0xff);
+
+System.out.println("Signed: " + signedByte + " Unsigned: " + unsignedByte);
+Would print out: "Signed: -1 Unsigned: 255"
+
+Whats actually happening here?
+
+We are using bitwise AND to mask all of the extraneous sign bits (the 1's to the left of the least significant 8 bits.)
+
+1111111111111111111111111010101
+&
+0000000000000000000000001111111
+=
+0000000000000000000000001010101
+Since the 32nd bit is now the sign bit instead of the 8th bit (And we set the sign bit to 0 which is positive), the original 8 bits from the byte are read by java as a positive value.
+
+share|improve

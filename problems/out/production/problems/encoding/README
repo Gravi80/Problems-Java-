@@ -1,0 +1,24 @@
+What is the advantage of choosing ASCII encoding over UTF-8?
+In some cases it can speed up access to individual characters.
+Imagine string str='ABC' encoded in UTF8 and in ASCII
+(and assuming that the language/compiler/database knows about encoding)
+
+To access third (C) character from this string using array-access operator which is featured in many
+programming languages you would do something like c = str[2].
+
+Now, if the string is ASCII encoded, all we need to do is to fetch third byte from the string.
+
+If, however string is UTF-8 encoded, we must first check if first character is a one or two byte char,
+then we need to perform same check on second character, and only then we can access the third character.
+
+The difference in performance will be the bigger, the longer the string.
+This is an issue for example in some database engines,
+where to find a beginning of a column placed 'after' a UTF-8 encoded VARCHAR,
+database does not only need to check how many characters are there in the VARCHAR field, but also how many bytes each one of them uses.
+
+
+
+Unicode maps 32-bit (4 byte) integers, also called code points or runes, to characters.
+UTF-8 is a way of storing those code points using less than 4 bytes per character.
+
+
